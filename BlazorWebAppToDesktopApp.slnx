@@ -1,0 +1,11 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="BlazorWebApp/BlazorWebApp.csproj" Id="83c8f285-415a-4230-9665-0ec61347fbee" />
+  <Project Path="BlazorWebViewWrapper/BlazorWebViewWrapper.csproj" Id="a755ee08-ea83-47a0-9eca-229743cbc92b" />
+  <Project Path="DesktopAppCLRWrapper/DesktopAppCLRWrapper.vcxproj" Id="29ed9dfa-6fdf-c4f2-4b50-2b5c9b8a634f" />
+  <Project Path="DesktopApp/DesktopApp.vcxproj" Id="d12e8d73-72fe-4f4f-9c55-fe1e94468147" />
+</Solution>
