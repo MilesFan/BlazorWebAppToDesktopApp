@@ -1,7 +1,25 @@
 ﻿@page "/"
-
+@using BlazorWebViewWrapper
+@inject WebApp app
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new Fluent Blazor app.
+
+<button @onclick="ShowDialog">Show Dialog</button>
+<button @onclick="CloseWindow">Close Window</button>
+
+@code
+{
+    private async Task ShowDialog()
+    {
+        if (app.Window is not null)
+            await app.Window.ShowOpenFileAsync();
+    }
+    private void CloseWindow()
+    {
+        if (app.Window is not null)
+            app.Window.Close();
+    }
+}

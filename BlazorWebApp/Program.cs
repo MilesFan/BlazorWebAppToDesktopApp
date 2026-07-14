@@ -14,9 +14,10 @@ namespace BlazorWebApp
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
             builder.Services.AddFluentUIComponents();
-
-            var app = builder.Build();
-            app.SetupWebView("Hello World");
+            //builder.Services.AddSingleton<WindowCoordinator>();
+            //var app = builder.Build();
+            var app = builder.BuildWithWebView("Hello World");
+            //app.SetupWebView("Hello World");
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
