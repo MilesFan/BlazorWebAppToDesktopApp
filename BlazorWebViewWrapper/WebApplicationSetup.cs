@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace BlazorWebViewWrapper
 {
-    public static class WebApplicationHelper
+    public static class WebApplicationSetup
     {
         private static string LOADING_PAGE_HTML = @"<!DOCTYPE html>
 <html lang=""zh-CN"">
@@ -48,22 +48,28 @@ window.chrome.webview.postMessage(""WebViewInitialized"");
 </body>
 </html>
 ";
-        public static WebApplication SetupWebView(this WebApplication app, string WindowTitle)
+        public static WebApplication BuildWithWebView(this WebApplicationBuilder builder, string WindowTitle)
         {
-            lock (app)
+            lock (builder)
             {
-                PhotinoWindow window = default!;
+                builder.Services.AddSingleton<WebApp>();
+                var app = builder.Build();
                 AutoResetEvent event_webview_ready = new AutoResetEvent(false);
 
-                Thread thread = new Thread(() =>
+                Thread thread = new Thread(async () =>
                 {
                     try
                     {
-                        window = new PhotinoWindow();
+                        var webapp = app.Services.GetService<WebApp>();
+                        PhotinoWindow window = new PhotinoWindow();
+                        if (webapp is not null)
+                        {
+                            webapp.Window = window;
+                        }
                         window.LogVerbosity = 0;
                         window.SetTitle(WindowTitle);
                         window.StartString = LOADING_PAGE_HTML;
-                        //window.SetDevToolsEnabled(true);
+                        window.SetDevToolsEnabled(true);
                         EventHandler<string> myEventHandler = default!;
 
                         myEventHandler = (sender, webMessage) =>
@@ -79,7 +85,7 @@ window.chrome.webview.postMessage(""WebViewInitialized"");
                         };
                         window.WebMessageReceived += myEventHandler;
                         window.WaitForClose();
-                        _ = app.StopAsync();
+                        await app.StopAsync();
                     }
                     catch (Exception ex)
                     {
@@ -100,10 +106,13 @@ window.chrome.webview.postMessage(""WebViewInitialized"");
                 app.Lifetime.ApplicationStarted.Register(() =>
                 {
                     event_webview_ready.WaitOne();
-                    window.Load(new Uri(app.Urls.First()));
+                    if (app.Services.GetService<WebApp>() is WebApp webApp)
+                    {
+                        webApp.Window?.Load(new Uri(app.Urls.First()));
+                    }
                 });
+                return app;
             }
-            return app;
         }
     }
 }
